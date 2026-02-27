@@ -1,0 +1,293 @@
+// ============================================================
+// CosmoSync — Prisma Schema
+// Database: PostgreSQL
+// ============================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// USER & IDENTITY
+// ============================================================
+
+model User {
+  id           String  @id @default(cuid())
+  email        String  @unique
+  passwordHash String
+
+  // Profile fields
+  displayName String?
+  avatarUrl   String?
+  bio         String?
+  role        UserRole @default(MEMBER)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  birthData      BirthData?
+  astroProfile   AstroProfile?
+  moodLogs       MoodLog[]
+  lessonProgress LessonProgress[]
+  matchesAsOne   Match[]          @relation("UserOneMatches")
+  matchesAsTwo   Match[]          @relation("UserTwoMatches")
+  expertProfile  ExpertProfile?
+  clientSessions Session[]        @relation("ClientSessions")
+
+  @@index([email])
+}
+
+enum UserRole {
+  MEMBER
+  EXPERT
+  ADMIN
+}
+
+// ============================================================
+// BIRTH DATA
+// Collected during onboarding; the source of truth for all
+// chart calculations (Western & Vedic).
+// ============================================================
+
+model BirthData {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  dateOfBirth       DateTime
+  isTimeApproximate Boolean  @default(false)
+  latitude          Float
+  longitude         Float
+  timezone          String   // IANA tz string, e.g. "America/New_York"
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  astroProfile AstroProfile?
+
+  @@index([userId])
+}
+
+// ============================================================
+// ASTRO PROFILE
+// Caches the "Big 3" for both Western (Tropical/Placidus) and
+// Vedic (Sidereal/Lahiri) systems to avoid redundant API calls
+// to the Swiss Ephemeris engine.
+// ============================================================
+
+model AstroProfile {
+  id          String @id @default(cuid())
+  userId      String @unique
+  birthDataId String @unique
+
+  // Western Astrology — Tropical Zodiac
+  westernSun    String // e.g. "Scorpio"
+  westernMoon   String // e.g. "Pisces"
+  westernRising String // e.g. "Leo"
+
+  // Vedic Astrology — Sidereal Zodiac (Lahiri Ayanamsa)
+  vedicSun    String // e.g. "Libra"
+  vedicMoon   String // e.g. "Aquarius"
+  vedicRising String // e.g. "Cancer"
+
+  // Cache validity — invalidate when birth data is corrected
+  calculatedAt DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  birthData BirthData @relation(fields: [birthDataId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ============================================================
+// MOOD LOG
+// Tracks daily wellness entries and correlates them with
+// live lunar data for the Astro-Wellness Journal feature.
+// ============================================================
+
+model MoodLog {
+  id     String @id @default(cuid())
+  userId String
+
+  rating          Int     // 1–5 star scale
+  note            String? // Optional free-text journal entry
+  moonPhaseAtTime String  // e.g. "Waxing Gibbous", "Full Moon"
+  aiInsight       String? // Claude-generated personalised insight
+  transitSummary  String? // JSON snapshot of TransitReport for history display
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([createdAt]) // Efficient range queries for trend analysis
+}
+
+// ============================================================
+// GAMIFIED EDUCATION — CosmoAcademy
+// ============================================================
+
+model Lesson {
+  id    String      @id @default(cuid())
+  slug  String      @unique // stable identifier, e.g. "planetary-dignities"
+  title String
+  description   String
+  level         Int         // Numeric level for unlock progression
+  topic         LessonTopic
+  emoji         String      @default("⭐")
+  stardustReward Int        @default(100) // awarded on first successful completion
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  progress LessonProgress[]
+
+  @@index([level])
+}
+
+enum LessonTopic {
+  FOUNDATIONS
+  PLANETARY_DIGNITIES
+  THE_12_HOUSES
+  ASPECTS
+  VEDIC_BASICS
+  SYNASTRY
+}
+
+// LessonProgress — join table between User and Lesson
+model LessonProgress {
+  id       String @id @default(cuid())
+  userId   String
+  lessonId String
+
+  completedAt    DateTime? // null = in-progress / failed
+  stardustEarned Int       @default(0)
+  bestScore      Int       @default(0) // highest correct answers (out of 5)
+  attempts       Int       @default(0) // total quiz attempts
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lesson Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, lessonId]) // Prevent duplicate progress rows
+  @@index([userId])
+}
+
+// ============================================================
+// MATCH — Synastry / Dating Component
+// Stores a pre-computed compatibility score between two users
+// derived from the Synastry Engine (Western aspects + Vedic
+// Guna Milan out of 36 points).
+// ============================================================
+
+model Match {
+  id String @id @default(cuid())
+
+  userOneId String
+  userTwoId String
+
+  compatibilityScore Float // 0.0 – 100.0 composite score
+
+  // Optional breakdown scores (populated by Synastry Engine)
+  chemistryScore     Float? // Western major aspects
+  stabilityScore     Float? // Vedic Guna Milan
+  communicationScore Float?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  userOne User @relation("UserOneMatches", fields: [userOneId], references: [id], onDelete: Cascade)
+  userTwo User @relation("UserTwoMatches", fields: [userTwoId], references: [id], onDelete: Cascade)
+
+  // Enforce one match record per pair regardless of order
+  @@unique([userOneId, userTwoId])
+  @@index([userOneId])
+  @@index([userTwoId])
+  @@index([compatibilityScore])
+}
+
+// ============================================================
+// EXPERT MARKETPLACE — Phase 5
+// ============================================================
+
+enum Specialty {
+  CAREER
+  RELATIONSHIP
+  VEDIC
+  WESTERN
+  NATAL_CHART
+  SYNASTRY
+  FORECASTING
+  SPIRITUAL
+}
+
+enum ApplicationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum SessionStatus {
+  PENDING
+  PAID
+  COMPLETED
+  CANCELLED
+}
+
+model ExpertProfile {
+  id                   String            @id @default(cuid())
+  userId               String            @unique
+  user                 User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  status               ApplicationStatus @default(PENDING)
+  displayName          String
+  bio                  String
+  specialties          Specialty[]
+  ratePerMinute        Float
+  avatarUrl            String?
+  yearsExperience      Int?
+  payoutsEnabled       Boolean           @default(false)
+  sessions             Session[]         @relation("ExpertSessions")
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  @@index([status])
+}
+
+model Session {
+  id                    String        @id @default(cuid())
+  expertId              String
+  expert                ExpertProfile @relation("ExpertSessions", fields: [expertId], references: [id])
+  clientId              String
+  client                User          @relation("ClientSessions", fields: [clientId], references: [id])
+  durationMinutes       Int
+  ratePerMinute         Float
+  totalAmount           Float
+  platformFee           Float
+  razorpayOrderId   String?       @unique
+  razorpayPaymentId String?       @unique
+  status            SessionStatus @default(PENDING)
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
+
+  @@index([expertId])
+  @@index([clientId])
+  @@index([status])
+}

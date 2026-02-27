@@ -1,0 +1,41 @@
+# =============================================================================
+# .dockerignore — files excluded from the Docker build context
+#
+# Keeping the context small speeds up `docker build` and prevents secrets
+# or large artefacts from leaking into the image.
+# =============================================================================
+
+# Dependency trees — reinstalled inside Docker
+node_modules
+
+# Next.js build output — rebuilt inside Docker
+.next
+
+# Source control
+.git
+.gitignore
+
+# Environment files — NEVER bake secrets into an image.
+# Pass them at runtime via:
+#   docker run --env-file .env.local cosmo-sync
+#   docker run -e DATABASE_URL=... cosmo-sync
+.env
+.env.local
+.env.production
+.env.development
+.env.*.local
+
+# Editor / OS artefacts
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode
+.idea
+
+# Documentation and planning files
+*.md
+PLAN*
+
+# Test output
+coverage

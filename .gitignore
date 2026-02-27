@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# Environment variables — never commit secrets
+.env
+.env.local
+.env.*.local
+
+# Prisma
+prisma/*.db
+prisma/migrations/
+
+# Swiss Ephemeris data files (large binaries — download separately)
+ephe/*.se1
+ephe/*.swe
+
+# OS artefacts
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Claude Code local settings
+.claude/
+
+# TypeScript build cache
+tsconfig.tsbuildinfo

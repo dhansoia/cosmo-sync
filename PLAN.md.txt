@@ -1,0 +1,83 @@
+# CosmoSync: Technical Implementation Roadmap
+
+**Tagline:** The First Integrated Ecosystem for Astrological Wellness, Education, and Connection.
+
+---
+
+## 🏗️ Phase 1: The "Hybrid Engine" (Core Logic)
+*Goal: Establish NASA-grade astronomical precision for Western and Vedic systems.*
+
+### Step 1.1: Project Initialization
+**Prompt:** > "Initialize a Next.js 14 project using the App Router, TypeScript, and Tailwind CSS. Setup a PostgreSQL database using Prisma. Create a `/lib/astro` directory. Install `swisseph` or a reliable wrapper. Configure a base `AstroEngine` class that can take `time`, `lat`, and `lng` and return a JSON object of planetary positions (0-360°)."
+
+### Step 1.2: The Hybrid Toggle Logic
+**Prompt:** > "Implement the 'System Toggle' logic. Define two functions: 
+> 1. `getWesternChart`: Uses Tropical Zodiac and Placidus House system.
+> 2. `getVedicChart`: Uses Sidereal Zodiac (Lahiri Ayanamsa) and Whole Sign Houses.
+> Create a React component that displays a user's 'Big 3' (Sun, Moon, Rising) and allows the user to toggle between these two systems with an instant UI update."
+
+
+
+---
+
+## 📈 Phase 2: The "Single Player" MVP (Months 1–4)
+*Goal: Daily Active Use (DAU) through wellness tracking.*
+
+### Step 2.1: User Onboarding & Metadata
+**Prompt:**
+> "Create an onboarding flow that collects: Birth Date, Exact Birth Time, and Birth City. Use a Google Maps Places API (or similar) to convert the city into precise Latitude/Longitude coordinates. Store this in the Prisma `User` model."
+
+### Step 2.2: The Astro-Wellness Journal
+**Prompt:**
+> "Build a 'Daily Transit' service. Compare the user's natal Moon position with the current 'Sky' Moon position. Create a journaling UI where users log their mood (1-5 stars). Use an LLM (Claude API) to generate a personalized insight: 'Today the Moon is in your 8th house, squaring your natal Mars—expect some emotional intensity. How are you feeling?'"
+
+---
+
+## 🎓 Phase 3: Gamified Education ("The Duolingo of Stars")
+*Goal: Move users from passive consumers to active students.*
+
+### Step 3.1: The Academy Schema
+**Prompt:**
+> "Design a database schema for `Lessons` and `UserProgress`. Create a 'CosmoAcademy' dashboard. Each lesson should have a 'Locked/Unlocked' state. Implement a 'Stardust' currency system where users earn points for completing a quiz on 'Planetary Dignities' or 'The 12 Houses'."
+
+---
+
+## 🤝 Phase 4: Social & Connectivity (Months 5–8)
+*Goal: Network effects via Synastry matching.*
+
+### Step 4.1: The Synastry Engine
+**Prompt:**
+> "Develop a backend utility to compare two User objects. Calculate:
+> 1. **Western Synastry:** Major aspects (Conjunction, Opposition, Square, Trine) between User A and User B's planets.
+> 2. **Vedic Guna Milan:** A scoring system out of 36 points based on Nakshatras.
+> Create a 'Compatibility Card' UI that summarizes these findings into 'Chemistry,' 'Stability,' and 'Communication' scores."
+
+
+
+---
+
+## 💰 Phase 5: The Expert Marketplace (Months 9–12)
+*Goal: High-ticket monetization and human connection.*
+
+### Step 5.1: Consultant Interface
+**Prompt:**
+> "Create an 'Expert' role in the User model. Build a marketplace gallery where users can filter astrologers by 'Specialty' (e.g., Career, Relationship, Vedic). Integrate Stripe Connect to allow Experts to set a 'Per Minute' rate and handle automated payouts."
+
+---
+
+## 🛠️ Technical Stack Summary
+| Layer | Technology |
+| :--- | :--- |
+| **Frontend** | Next.js 14, Tailwind CSS, Framer Motion |
+| **Backend** | Node.js (Edge Functions), Prisma ORM |
+| **Database** | PostgreSQL (Supabase or Neon) |
+| **Astro Data** | Swiss Ephemeris (via C/C++ bindings or API) |
+| **AI/LLM** | Anthropic Claude API (for personalized readings) |
+| **Payments** | Stripe |
+
+---
+
+## 🚀 Next Steps
+1. **Initialize the Repository:** Run the Phase 1 Prompt 1.1.
+2. **Verify Ephemeris:** Ensure the calculations match a trusted source like Astro.com.
+3. **Design System:** Define a "Mystical Minimalist" UI kit in Tailwind.
