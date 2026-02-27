@@ -39,3 +39,29 @@ body::before {
 
 /* All page content sits above the star field */
 #__next, main { position: relative; z-index: 1; }
+
+/* ── Input dark-theme fix ────────────────────────────────────────────────────
+   Browsers on Windows render <input> / <textarea> with system light-mode text
+   by default, making white text invisible on dark backgrounds.
+   `color-scheme: dark` tells the browser to use dark-mode native controls.
+   `color` + `-webkit-text-fill-color` ensure typed text is always white.
+   The autofill block overrides Chrome's yellow-background injection.
+   ─────────────────────────────────────────────────────────────────────────── */
+input,
+textarea,
+select {
+  color-scheme: dark;
+  color: white;
+  -webkit-text-fill-color: white;
+  caret-color: white;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px #0f0f18 inset !important;
+  -webkit-text-fill-color: white !important;
+  caret-color: white;
+}
