@@ -33,6 +33,7 @@ model User {
   // Relations
   birthData      BirthData?
   astroProfile   AstroProfile?
+  kundliProfile  KundliProfile?
   moodLogs       MoodLog[]
   lessonProgress LessonProgress[]
   matchesAsOne   Match[]          @relation("UserOneMatches")
@@ -291,6 +292,45 @@ model Session {
   @@index([expertId])
   @@index([clientId])
   @@index([status])
+}
+
+// ============================================================
+// KUNDLI PROFILE
+// Persists the result of a KundliAnalysisEngine run so subsequent
+// page loads are served from cache instead of re-running the LLM.
+// Invalidated (overwritten) whenever the user triggers a fresh save.
+// ============================================================
+
+model KundliProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  // Shadow planet positions
+  rahuLongitude Float
+  ketuLongitude Float
+
+  // Denormalised dosha flags for fast filtering / display
+  hasMangalDosha   Boolean @default(false)
+  hasKaalSarpDosha Boolean @default(false)
+  hasSadeSati      Boolean @default(false)
+
+  // Full analysis blobs (DoshaReport / YogaReport serialised as JSON)
+  doshaData Json
+  yogaData  Json
+
+  // Claude-generated narrative
+  summary String
+
+  // When the analysis was computed (not when the row was written)
+  calculatedAt DateTime @default(now())
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 // ============================================================

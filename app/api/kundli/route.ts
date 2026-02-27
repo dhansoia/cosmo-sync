@@ -1,16 +1,18 @@
 /**
  * GET /api/kundli
  *
- * Returns a full Vedic Kundli analysis for the authenticated user:
- *   • Dosha report  — Mangal Dosha, Kaal Sarp Dosha, Sade Sati
- *   • Yoga report   — Gajakesari, Budhaditya, Raj Yogas
- *   • Rahu / Ketu   — computed mean-node longitudes
- *   • Summary       — Claude-generated third-person narrative
- *   • Remedies      — DB-tracked remedy records (with isCompleted state)
+ * Returns a full Vedic Kundli analysis for the authenticated user.
+ *
+ * Cache behaviour:
+ *   If the user has previously saved their Kundli (via POST /api/kundli/save),
+ *   the stored profile is returned immediately — no LLM call is made.
+ *   Otherwise a fresh analysis is computed on-the-fly (includes LLM summary).
  *
  * On first call the applicable remedies are seeded into the `Remedy` table so
  * the user can track completion over time. Subsequent calls preserve any
  * `isCompleted` flags already set.
+ *
+ * Response includes a `cached` boolean so the UI can offer a "Refresh" option.
  *
  * Requires: `cosmo_uid` httpOnly cookie (set during onboarding).
  * Returns 401 if unauthenticated, 404 if no BirthData on file.
@@ -20,18 +22,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db }                        from '@/lib/db';
 import { AstroEngine }               from '@/lib/astro';
 import { KundliAnalysisEngine }      from '@/lib/kundli';
+import type { DoshaReport, YogaReport } from '@/lib/kundli';
 
 const astro  = new AstroEngine();
 const kundli = new KundliAnalysisEngine();
 
 export async function GET(req: NextRequest) {
-  // ── Auth ────────────────────────────────────────────────────────────────────
+  // ── Auth ─────────────────────────────────────────────────────────────────────
   const uid = req.cookies.get('cosmo_uid')?.value;
   if (!uid) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
 
-  // ── Birth data ───────────────────────────────────────────────────────────────
+  // ── Birth data ────────────────────────────────────────────────────────────────
   const birthData = await db.birthData.findUnique({ where: { userId: uid } });
   if (!birthData) {
     return NextResponse.json(
@@ -40,31 +43,53 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  // ── Compute Vedic chart + Kundli analysis ────────────────────────────────────
-  const chart    = astro.getVedicChart(birthData.dateOfBirth, birthData.latitude, birthData.longitude);
-  const analysis = await kundli.analyse(chart);
+  // ── Try cache first ───────────────────────────────────────────────────────────
+  const cached = await db.kundliProfile.findUnique({ where: { userId: uid } });
 
-  // ── Seed remedy tracker (first call only) ───────────────────────────────────
-  // Check whether any remedies have already been persisted for this user.
-  // If not, flatten the applicable remedies from the analysis and create them.
-  const existingCount = await db.remedy.count({ where: { userId: uid } });
+  let doshas:        DoshaReport;
+  let yogas:         YogaReport;
+  let rahuLongitude: number;
+  let ketuLongitude: number;
+  let summary:       string;
+  let isCached:      boolean;
 
-  if (existingCount === 0) {
-    const rows = analysis.applicableRemedies.flatMap(({ planet, remedies }) =>
-      remedies.map((r) => ({
-        userId:      uid,
-        planet,
-        type:        capitalise(r.category),
-        description: `${r.item} — ${r.detail}`,
-      })),
-    );
+  if (cached) {
+    doshas        = cached.doshaData as unknown as DoshaReport;
+    yogas         = cached.yogaData  as unknown as YogaReport;
+    rahuLongitude = cached.rahuLongitude;
+    ketuLongitude = cached.ketuLongitude;
+    summary       = cached.summary;
+    isCached      = true;
+  } else {
+    // ── Fresh computation ────────────────────────────────────────────────────────
+    const chart    = astro.getVedicChart(birthData.dateOfBirth, birthData.latitude, birthData.longitude);
+    const analysis = await kundli.analyse(chart);
 
-    if (rows.length > 0) {
-      await db.remedy.createMany({ data: rows });
+    doshas        = analysis.doshas;
+    yogas         = analysis.yogas;
+    rahuLongitude = analysis.rahuLongitude;
+    ketuLongitude = analysis.ketuLongitude;
+    summary       = analysis.summary;
+    isCached      = false;
+
+    // ── Seed remedy tracker on first call ────────────────────────────────────────
+    const existingCount = await db.remedy.count({ where: { userId: uid } });
+    if (existingCount === 0) {
+      const rows = analysis.applicableRemedies.flatMap(({ planet, remedies }) =>
+        remedies.map((r) => ({
+          userId:      uid,
+          planet,
+          type:        capitalise(r.category),
+          description: `${r.item} — ${r.detail}`,
+        })),
+      );
+      if (rows.length > 0) {
+        await db.remedy.createMany({ data: rows });
+      }
     }
   }
 
-  // ── Fetch DB remedy records (with live isCompleted state) ────────────────────
+  // ── Fetch DB remedy records (with live isCompleted state) ─────────────────────
   const trackedRemedies = await db.remedy.findMany({
     where:   { userId: uid },
     orderBy: [{ planet: 'asc' }, { createdAt: 'asc' }],
@@ -78,14 +103,16 @@ export async function GET(req: NextRequest) {
     },
   });
 
-  // ── Response ─────────────────────────────────────────────────────────────────
+  // ── Response ──────────────────────────────────────────────────────────────────
   return NextResponse.json({
-    doshas:         analysis.doshas,
-    yogas:          analysis.yogas,
-    rahuLongitude:  analysis.rahuLongitude,
-    ketuLongitude:  analysis.ketuLongitude,
-    summary:        analysis.summary,
-    remedies:       trackedRemedies,
+    doshas,
+    yogas,
+    rahuLongitude,
+    ketuLongitude,
+    summary,
+    remedies:    trackedRemedies,
+    cached:      isCached,
+    savedAt:     cached?.calculatedAt ?? null,
   });
 }
 
