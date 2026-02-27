@@ -39,6 +39,7 @@ model User {
   matchesAsTwo   Match[]          @relation("UserTwoMatches")
   expertProfile  ExpertProfile?
   clientSessions Session[]        @relation("ClientSessions")
+  remedies       Remedy[]
 
   @@index([email])
 }
@@ -290,4 +291,29 @@ model Session {
   @@index([expertId])
   @@index([clientId])
   @@index([status])
+}
+
+// ============================================================
+// REMEDY TRACKER
+// Persists per-user remedies surfaced by the KundliAnalysisEngine.
+// Users can mark individual remedies as completed to track their
+// sadhana (spiritual practice) progress.
+// ============================================================
+
+model Remedy {
+  id          String   @id @default(cuid())
+  userId      String
+  planet      String   // e.g. "Saturn"
+  type        String   // e.g. "Gemstone", "Mantra"
+  description String
+  isCompleted Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, isCompleted]) // Efficient filtering for active vs completed remedies
 }

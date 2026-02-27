@@ -1,0 +1,331 @@
+{
+  "sun": {
+    "planet": "Sun",
+    "planetId": "sun",
+    "remedies": [
+      {
+        "category": "mantra",
+        "item": "Aditya Hridayam",
+        "detail": "Recite the Aditya Hridayam hymn (108 verses) on Sundays at sunrise, facing east."
+      },
+      {
+        "category": "mantra",
+        "item": "Surya Beej Mantra",
+        "detail": "Chant 'Om Hraam Hreem Hraum Sah Suryaya Namah' 7,000 times over 40 days, starting on a Sunday."
+      },
+      {
+        "category": "ratna",
+        "item": "Ruby (Manik)",
+        "detail": "Wear a natural Ruby of at least 3–5 carats set in gold on the ring finger of the right hand. Energise on a Sunday morning."
+      },
+      {
+        "category": "daan",
+        "item": "Wheat & Jaggery",
+        "detail": "Donate wheat, jaggery (gur), copper vessels, or red cloth to a temple or the needy on Sundays."
+      },
+      {
+        "category": "daan",
+        "item": "Cow Feeding",
+        "detail": "Feed a cow with wheat bread every Sunday to strengthen the Solar principle."
+      },
+      {
+        "category": "vrata",
+        "item": "Surya Vrata",
+        "detail": "Fast on Sundays from sunrise to sunset, consuming only fruit and water. Break the fast after sunset with a single meal."
+      }
+    ]
+  },
+  "moon": {
+    "planet": "Moon",
+    "planetId": "moon",
+    "remedies": [
+      {
+        "category": "mantra",
+        "item": "Chandra Beej Mantra",
+        "detail": "Chant 'Om Shraam Shreem Shraum Sah Chandraya Namah' 11,000 times over 40 days. Begin on a Monday evening."
+      },
+      {
+        "category": "mantra",
+        "item": "Maha Mrityunjaya Mantra",
+        "detail": "Recite 'Om Tryambakam Yajamahe…' 108 times daily, especially on Mondays, for emotional stability and Lunar strength."
+      },
+      {
+        "category": "ratna",
+        "item": "Pearl (Moti)",
+        "detail": "Wear a natural, lustrous Pearl set in silver on the little finger of the right hand. Best worn on a Monday morning."
+      },
+      {
+        "category": "daan",
+        "item": "Milk & Rice",
+        "detail": "Donate white rice, milk, curd, or white cloth to a Shiva temple on Mondays or on the night of the full moon."
+      },
+      {
+        "category": "daan",
+        "item": "Silver Articles",
+        "detail": "Donate silver utensils or white sweets on Mondays to strengthen the Moon."
+      },
+      {
+        "category": "vrata",
+        "item": "Somvar Vrata",
+        "detail": "Fast on Mondays for mental clarity and emotional balance. Consume milk and fruits only. Observe for 16 consecutive Mondays (Solah Somvar)."
+      }
+    ]
+  },
+  "mars": {
+    "planet": "Mars",
+    "planetId": "mars",
+    "remedies": [
+      {
+        "category": "mantra",
+        "item": "Mangal Beej Mantra",
+        "detail": "Chant 'Om Kraam Kreem Kraum Sah Bhaumaya Namah' 7,000 times starting on a Tuesday."
+      },
+      {
+        "category": "mantra",
+        "item": "Hanuman Chalisa",
+        "detail": "Recite the Hanuman Chalisa daily, especially on Tuesdays, to pacify an afflicted Mars and invoke its positive qualities."
+      },
+      {
+        "category": "ratna",
+        "item": "Red Coral (Moonga)",
+        "detail": "Wear a natural Red Coral of 6–9 carats in gold or copper on the ring finger of the right hand. Set on a Tuesday morning after sunrise."
+      },
+      {
+        "category": "daan",
+        "item": "Red Lentils & Jaggery",
+        "detail": "Donate red lentils (masoor dal), red cloth, copper, or sweets made from jaggery on Tuesdays."
+      },
+      {
+        "category": "daan",
+        "item": "Blood Donation",
+        "detail": "Donating blood on Tuesdays is considered one of the most powerful remedies for Mangal Dosha."
+      },
+      {
+        "category": "vrata",
+        "item": "Mangalvar Vrata",
+        "detail": "Fast on Tuesdays, breaking the fast in the evening with a single meal free from salt. Observe for 21 Tuesdays for Mangal Dosha mitigation."
+      }
+    ]
+  },
+  "mercury": {
+    "planet": "Mercury",
+    "planetId": "mercury",
+    "remedies": [
+      {
+        "category": "mantra",
+        "item": "Budha Beej Mantra",
+        "detail": "Chant 'Om Braam Breem Braum Sah Budhaya Namah' 17,000 times starting on a Wednesday."
+      },
+      {
+        "category": "mantra",
+        "item": "Vishnu Sahasranama",
+        "detail": "Recite the Vishnu Sahasranama on Wednesdays to strengthen Mercury and sharpen intellect and communication."
+      },
+      {
+        "category": "ratna",
+        "item": "Emerald (Panna)",
+        "detail": "Wear a natural Emerald of 3–5 carats set in gold or silver on the little finger of the right hand. Best worn on a Wednesday morning."
+      },
+      {
+        "category": "daan",
+        "item": "Green Moong Dal",
+        "detail": "Donate green moong lentils, green vegetables, green cloth, or books on Wednesdays."
+      },
+      {
+        "category": "daan",
+        "item": "Educational Donations",
+        "detail": "Donate stationery, books, or sponsor education for an underprivileged child to strengthen Mercury."
+      },
+      {
+        "category": "vrata",
+        "item": "Budhvar Vrata",
+        "detail": "Fast on Wednesdays, eating only once at noon. Consume green foods and avoid non-vegetarian meals. Observe for 21 Wednesdays."
+      }
+    ]
+  },
+  "jupiter": {
+    "planet": "Jupiter",
+    "planetId": "jupiter",
+    "remedies": [
+      {
+        "category": "mantra",
+        "item": "Guru Beej Mantra",
+        "detail": "Chant 'Om Graam Greem Graum Sah Gurave Namah' 16,000 times starting on a Thursday."
+      },
+      {
+        "category": "mantra",
+        "item": "Om Namo Bhagavate Vasudevaya",
+        "detail": "Recite this Vishnu mantra 108 times daily on Thursdays to invoke Jupiter's blessings of wisdom and prosperity."
+      },
+      {
+        "category": "ratna",
+        "item": "Yellow Sapphire (Pukhraj)",
+        "detail": "Wear a natural Yellow Sapphire of 4–5 carats in gold on the index finger of the right hand. Energise on a Thursday morning."
+      },
+      {
+        "category": "daan",
+        "item": "Yellow Items",
+        "detail": "Donate yellow lentils (chana dal), turmeric, yellow cloth, gold, or saffron on Thursdays."
+      },
+      {
+        "category": "daan",
+        "item": "Guru Seva",
+        "detail": "Serve or make donations to a learned teacher, priest, or Brahmin on Thursdays to strengthen Jupiter."
+      },
+      {
+        "category": "vrata",
+        "item": "Guruvar Vrata",
+        "detail": "Fast on Thursdays, eating only once in the evening. Wear yellow clothes and offer banana to Lord Vishnu. Observe for 16 Thursdays."
+      }
+    ]
+  },
+  "venus": {
+    "planet": "Venus",
+    "planetId": "venus",
+    "remedies": [
+      {
+        "category": "mantra",
+        "item": "Shukra Beej Mantra",
+        "detail": "Chant 'Om Draam Dreem Draum Sah Shukraya Namah' 16,000 times starting on a Friday."
+      },
+      {
+        "category": "mantra",
+        "item": "Lakshmi Ashtakam",
+        "detail": "Recite the Lakshmi Ashtakam on Fridays to attract the blessings of Venus for love, beauty, and abundance."
+      },
+      {
+        "category": "ratna",
+        "item": "Diamond (Heera)",
+        "detail": "Wear a natural Diamond of 0.5–1 carat set in platinum or silver on the middle finger of the right hand. Best set on a Friday morning."
+      },
+      {
+        "category": "ratna",
+        "item": "White Sapphire (Safed Pukhraj)",
+        "detail": "An affordable alternative to Diamond — wear a White Sapphire of 4–5 carats in silver on the middle finger."
+      },
+      {
+        "category": "daan",
+        "item": "White & Fragrant Items",
+        "detail": "Donate white rice, white flowers, camphor, white sweets, or perfume to a Lakshmi or Durga temple on Fridays."
+      },
+      {
+        "category": "vrata",
+        "item": "Shukravar Vrata",
+        "detail": "Fast on Fridays, consuming only milk and fruits. Dress in white and light a ghee lamp before the Goddess. Observe for 16 Fridays."
+      }
+    ]
+  },
+  "saturn": {
+    "planet": "Saturn",
+    "planetId": "saturn",
+    "remedies": [
+      {
+        "category": "mantra",
+        "item": "Shani Beej Mantra",
+        "detail": "Chant 'Om Praam Preem Praum Sah Shanaischaraya Namah' 19,000 times starting on a Saturday."
+      },
+      {
+        "category": "mantra",
+        "item": "Shani Chalisa",
+        "detail": "Recite the Shani Chalisa every Saturday morning to appease Saturn and receive blessings of discipline and longevity."
+      },
+      {
+        "category": "ratna",
+        "item": "Blue Sapphire (Neelam)",
+        "detail": "Wear a natural Blue Sapphire (caution: must be tested first for 3 days) of 3–5 carats set in iron or silver on the middle finger."
+      },
+      {
+        "category": "ratna",
+        "item": "Amethyst (Katela)",
+        "detail": "A safer Saturn alternative — wear Amethyst of 6–8 carats in silver on the middle finger of the right hand."
+      },
+      {
+        "category": "daan",
+        "item": "Black Sesame & Iron",
+        "detail": "Donate black sesame seeds (til), black cloth, mustard oil, iron utensils, or shoes to the needy on Saturdays."
+      },
+      {
+        "category": "daan",
+        "item": "Shani Lamp",
+        "detail": "Light a mustard oil lamp under a Peepal tree every Saturday evening and offer black sesame seeds."
+      },
+      {
+        "category": "vrata",
+        "item": "Shanivar Vrata",
+        "detail": "Fast on Saturdays, eating only one meal of sesame-based food in the evening. Visit a Shani or Hanuman temple. Observe for 19 Saturdays."
+      }
+    ]
+  },
+  "rahu": {
+    "planet": "Rahu",
+    "planetId": "rahu",
+    "remedies": [
+      {
+        "category": "mantra",
+        "item": "Rahu Beej Mantra",
+        "detail": "Chant 'Om Bhram Bhreem Bhraum Sah Rahave Namah' 18,000 times starting on a Saturday evening."
+      },
+      {
+        "category": "mantra",
+        "item": "Durga Saptashati",
+        "detail": "Recite Chapter 11 of the Durga Saptashati (Narayani Stuti) on Saturdays to pacify Rahu's disruptive influence."
+      },
+      {
+        "category": "ratna",
+        "item": "Hessonite Garnet (Gomed)",
+        "detail": "Wear a natural Hessonite Garnet of 6–8 carats set in silver or panchdhatu on the middle finger of the right hand on a Saturday."
+      },
+      {
+        "category": "daan",
+        "item": "Multi-coloured Cloth",
+        "detail": "Donate multi-coloured cloth, blankets, or dark blue items on Saturdays. Feed homeless people on a Saturday."
+      },
+      {
+        "category": "daan",
+        "item": "Coconut Immersion",
+        "detail": "Float a coconut with a coin in a river or sea on a Saturday to release Rahu's grip on the mind."
+      },
+      {
+        "category": "vrata",
+        "item": "Rahu Kalam Observation",
+        "detail": "Avoid starting new ventures during Rahu Kalam (1.5 hours each day based on weekday). Light a ghee lamp and chant Rahu mantra during that period instead."
+      }
+    ]
+  },
+  "ketu": {
+    "planet": "Ketu",
+    "planetId": "ketu",
+    "remedies": [
+      {
+        "category": "mantra",
+        "item": "Ketu Beej Mantra",
+        "detail": "Chant 'Om Sraam Sreem Sraum Sah Ketave Namah' 7,000 times starting on a Thursday or Saturday."
+      },
+      {
+        "category": "mantra",
+        "item": "Ganesha Atharvashirsha",
+        "detail": "Recite the Ganesha Atharvashirsha on Thursdays to harmonise Ketu's spiritual energy and remove obstacles."
+      },
+      {
+        "category": "ratna",
+        "item": "Cat's Eye (Lehsunia)",
+        "detail": "Wear a natural Cat's Eye Chrysoberyl of 6–8 carats set in silver or panchdhatu on the middle or ring finger. Energise on a Thursday."
+      },
+      {
+        "category": "daan",
+        "item": "Brown & Grey Items",
+        "detail": "Donate brown blankets, sesame seeds mixed with jaggery, or iron items on Thursdays or Saturdays."
+      },
+      {
+        "category": "daan",
+        "item": "Dog Feeding",
+        "detail": "Feed stray dogs with bread soaked in milk on Thursdays — a powerful remedy for a challenging Ketu."
+      },
+      {
+        "category": "vrata",
+        "item": "Ketu Upasana",
+        "detail": "Meditate in silence for 20 minutes daily at dawn, facing south. Practice non-attachment and service to elders or spiritual seekers to align with Ketu's karmic purpose."
+      }
+    ]
+  }
+}

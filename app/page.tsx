@@ -112,6 +112,17 @@ export default async function Home() {
             ♡ Compatibility
           </Link>
           <Link
+            href="/kundli"
+            className="
+              px-5 py-2.5 rounded-xl text-sm font-medium
+              border border-orange-400/20 text-orange-400/70
+              hover:border-orange-400/40 hover:text-orange-400
+              transition-colors
+            "
+          >
+            𑀓 Kundli
+          </Link>
+          <Link
             href="/marketplace"
             className="
               px-5 py-2.5 rounded-xl text-sm font-medium
