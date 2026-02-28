@@ -1,14 +1,9 @@
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { BigThreeCard } from '@/components/big-three/BigThreeCard';
-import { LogoutButton } from '@/components/auth/LogoutButton';
 import { db } from '@/lib/db';
 import type { UserRole } from '@prisma/client';
 
-/**
- * Demo birth data shown when the user has not yet onboarded.
- * New Delhi, India — June 15 1990 08:30 UTC.
- */
 const DEMO = {
   time:           '1990-06-15T08:30:00Z',
   lat:            28.6139,
@@ -16,18 +11,76 @@ const DEMO = {
   birthInfoLabel: 'Jun 15, 1990 · 08:30 UTC · New Delhi, India (demo)',
 };
 
+const FEATURES: {
+  href:    string;
+  icon:    string;
+  title:   string;
+  desc:    string;
+  accent:  string;
+  border:  string;
+}[] = [
+  {
+    href:   '/journal',
+    icon:   '☽',
+    title:  'Daily Journal',
+    desc:   'Log your mood with live transit insights and Claude-generated reflections.',
+    accent: 'text-sky-300',
+    border: 'hover:border-sky-400/30',
+  },
+  {
+    href:   '/academy',
+    icon:   '✦',
+    title:  'CosmoAcademy',
+    desc:   'Learn astrology through interactive lessons and earn Stardust.',
+    accent: 'text-amber-300',
+    border: 'hover:border-amber-400/30',
+  },
+  {
+    href:   '/kundli',
+    icon:   '𑀓',
+    title:  'Kundli',
+    desc:   'Vedic birth chart — doshas, yogas, and personalised remedies.',
+    accent: 'text-orange-300',
+    border: 'hover:border-orange-400/30',
+  },
+  {
+    href:   '/synastry',
+    icon:   '♡',
+    title:  'Compatibility',
+    desc:   'Compare charts using Western aspects and Vedic Guna Milan.',
+    accent: 'text-rose-300',
+    border: 'hover:border-rose-400/30',
+  },
+  {
+    href:   '/marketplace',
+    icon:   '◈',
+    title:  'Marketplace',
+    desc:   'Book one-on-one sessions with verified astrology experts.',
+    accent: 'text-violet-300',
+    border: 'hover:border-violet-400/30',
+  },
+  {
+    href:   '/profile',
+    icon:   '◎',
+    title:  'Profile',
+    desc:   'Manage your account, birth data, and Big Three summary.',
+    accent: 'text-white/50',
+    border: 'hover:border-white/20',
+  },
+];
+
 export default async function Home() {
-  // ── Read personalisation cookie ──────────────────────────────────────────
   const cookieStore = cookies();
   const uid = cookieStore.get('cosmo_uid')?.value ?? null;
 
   const user = uid
-    ? await db.user.findUnique({ where: { id: uid }, select: { role: true, birthData: true } })
+    ? await db.user.findUnique({
+        where: { id: uid },
+        select: { role: true, birthData: true },
+      })
     : null;
 
   const birthData = user?.birthData ?? null;
-
-  // ── Build chart props ────────────────────────────────────────────────────
   const isPersonalised = birthData !== null;
   const userRole: UserRole | null = user?.role ?? null;
 
@@ -41,167 +94,121 @@ export default async function Home() {
     : DEMO;
 
   return (
-    <main className="relative min-h-screen flex flex-col items-center justify-start pt-20 pb-32 px-4">
+    <main className="relative flex flex-col items-center justify-start pt-14 pb-32 px-4">
 
-      {/* Brand header */}
-      <header className="text-center mb-16 space-y-3">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <span className="text-3xl" aria-hidden>✦</span>
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <section className="text-center pt-16 pb-10 space-y-4 max-w-lg mx-auto">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-white/40 text-xs tracking-widest uppercase mb-2">
+          <span className="animate-glow-pulse">✦</span>
+          Two traditions, one platform
         </div>
-        <h1 className="text-5xl font-bold tracking-tight bg-gradient-to-br from-white via-white/90 to-white/50 bg-clip-text text-transparent">
+        <h1 className="text-5xl sm:text-6xl font-bold tracking-tight bg-gradient-to-br from-white via-white/90 to-white/45 bg-clip-text text-transparent">
           CosmoSync
         </h1>
-        <p className="text-white/40 text-base max-w-md mx-auto leading-relaxed">
-          Astrological Wellness, Education &amp; Connection —<br />
-          one platform, two traditions.
+        <p className="text-white/45 text-base max-w-md mx-auto leading-relaxed">
+          Astrological wellness, education &amp; connection —<br className="hidden sm:block" />
+          astrology for the modern era.
         </p>
-      </header>
+      </section>
 
-      {/* Divider */}
-      <div className="w-px h-12 bg-gradient-to-b from-white/20 to-transparent mb-12" aria-hidden />
+      {/* ── Divider ──────────────────────────────────────────────────────── */}
+      <div className="w-px h-10 bg-gradient-to-b from-white/20 to-transparent mb-10" aria-hidden />
 
-      {/* Chart */}
+      {/* ── Chart ────────────────────────────────────────────────────────── */}
       <BigThreeCard {...chartProps} />
 
-      {/* CTA — only when showing the demo */}
+      {/* ── CTA (unauthenticated) ─────────────────────────────────────────── */}
       {!isPersonalised && (
-        <div className="mt-10 flex flex-col items-center gap-4">
+        <div className="mt-10 flex flex-col items-center gap-3 animate-fade-up">
           <p className="text-white/30 text-sm">This is a demo chart. Ready to see yours?</p>
           <Link
             href="/register"
             className="
               px-7 py-3 rounded-xl text-sm font-semibold
-              bg-white text-black hover:bg-white/90 active:bg-white/80
-              transition-colors shadow-lg shadow-white/10
+              bg-white text-black hover:bg-white/92 active:bg-white/85
+              transition-all shadow-lg shadow-white/10
             "
           >
             Start your journey ✦
           </Link>
-          <p className="text-white/25 text-xs">
+          <p className="text-white/22 text-xs">
             Already have an account?{' '}
-            <Link href="/login" className="text-white/45 hover:text-white/70 underline transition-colors">
+            <Link href="/login" className="text-white/40 hover:text-white/70 underline underline-offset-2 transition-colors">
               Sign in
             </Link>
           </p>
         </div>
       )}
 
-      {/* Nav links — shown when personalised */}
+      {/* ── Feature grid (authenticated) ─────────────────────────────────── */}
       {isPersonalised && (
-        <div className="mt-8 flex items-center gap-3 flex-wrap justify-center">
-          <Link
-            href="/journal"
-            className="
-              px-5 py-2.5 rounded-xl text-sm font-medium
-              border border-white/15 text-white/60
-              hover:border-white/30 hover:text-white/90
-              transition-colors
-            "
-          >
-            ☽ Daily Journal
-          </Link>
-          <Link
-            href="/academy"
-            className="
-              px-5 py-2.5 rounded-xl text-sm font-medium
-              border border-amber-400/20 text-amber-400/70
-              hover:border-amber-400/40 hover:text-amber-400
-              transition-colors
-            "
-          >
-            ✦ CosmoAcademy
-          </Link>
-          <Link
-            href="/synastry"
-            className="
-              px-5 py-2.5 rounded-xl text-sm font-medium
-              border border-rose-400/20 text-rose-400/70
-              hover:border-rose-400/40 hover:text-rose-400
-              transition-colors
-            "
-          >
-            ♡ Compatibility
-          </Link>
-          <Link
-            href="/kundli"
-            className="
-              px-5 py-2.5 rounded-xl text-sm font-medium
-              border border-orange-400/20 text-orange-400/70
-              hover:border-orange-400/40 hover:text-orange-400
-              transition-colors
-            "
-          >
-            𑀓 Kundli
-          </Link>
-          <Link
-            href="/marketplace"
-            className="
-              px-5 py-2.5 rounded-xl text-sm font-medium
-              border border-violet-400/20 text-violet-400/70
-              hover:border-violet-400/40 hover:text-violet-400
-              transition-colors
-            "
-          >
-            ✦ Marketplace
-          </Link>
-          <Link
-            href="/profile"
-            className="
-              px-5 py-2.5 rounded-xl text-sm font-medium
-              border border-white/10 text-white/40
-              hover:border-white/25 hover:text-white/70
-              transition-colors
-            "
-          >
-            ◎ Profile
-          </Link>
-          {userRole === 'ADMIN' && (
-            <Link
-              href="/admin"
-              className="
-                px-5 py-2.5 rounded-xl text-sm font-medium
-                border border-red-400/20 text-red-400/60
-                hover:border-red-400/40 hover:text-red-400
-                transition-colors
-              "
-            >
-              ⚙ Admin
-            </Link>
-          )}
+        <div className="mt-14 w-full max-w-2xl mx-auto animate-fade-up">
+          <p className="text-white/25 text-xs uppercase tracking-widest text-center mb-6">Explore</p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {FEATURES.filter(f => f.href !== '/profile' || true).map((f) => {
+              if (f.href === '/profile' && userRole === 'ADMIN') return null;
+              return (
+                <Link
+                  key={f.href}
+                  href={f.href}
+                  className={`
+                    group relative rounded-2xl border border-white/8 bg-white/[0.03]
+                    p-5 flex flex-col gap-2
+                    hover:bg-white/[0.06] ${f.border}
+                    transition-all duration-200
+                  `}
+                >
+                  <span className={`text-2xl ${f.accent} transition-transform duration-200 group-hover:scale-110 inline-block`}>
+                    {f.icon}
+                  </span>
+                  <div className="space-y-0.5">
+                    <p className="text-white/80 text-sm font-medium">{f.title}</p>
+                    <p className="text-white/30 text-xs leading-relaxed">{f.desc}</p>
+                  </div>
+                </Link>
+              );
+            })}
+            {userRole === 'ADMIN' && (
+              <Link
+                href="/admin"
+                className="
+                  group relative rounded-2xl border border-white/8 bg-white/[0.03]
+                  p-5 flex flex-col gap-2
+                  hover:bg-white/[0.06] hover:border-red-400/25
+                  transition-all duration-200
+                "
+              >
+                <span className="text-2xl text-red-400/60 transition-transform duration-200 group-hover:scale-110 inline-block">
+                  ⚙
+                </span>
+                <div className="space-y-0.5">
+                  <p className="text-white/80 text-sm font-medium">Admin</p>
+                  <p className="text-white/30 text-xs leading-relaxed">Platform stats and expert review.</p>
+                </div>
+              </Link>
+            )}
+          </div>
         </div>
       )}
 
-      {/* Sign out — shown when logged in */}
-      {uid && (
-        <div className="mt-6">
-          <LogoutButton />
-        </div>
-      )}
-
-      {/* Feature teaser */}
-      <footer className="mt-20 text-center space-y-3 text-white/20 text-sm">
-        <p>Phase 2 — Astro-Wellness Journal &nbsp;·&nbsp; Phase 3 — CosmoAcademy &nbsp;·&nbsp; Phase 4 — Synastry &amp; Compatibility &nbsp;·&nbsp; Phase 5 — Expert Marketplace</p>
+      {/* ── Footer ───────────────────────────────────────────────────────── */}
+      <footer className="mt-24 text-center text-white/15 text-xs space-y-1">
+        <p>Western &amp; Vedic traditions · AI-powered insights · Expert marketplace</p>
       </footer>
+
     </main>
   );
 }
-
-// ─── helpers ────────────────────────────────────────────────────────────────
 
 function buildBirthLabel(dob: Date, isApprox: boolean, timezone: string): string {
   const dateStr = dob.toLocaleDateString('en-US', {
     year: 'numeric', month: 'short', day: 'numeric',
     timeZone: timezone,
   });
-
-  if (isApprox) {
-    return `${dateStr} · time unknown · ${timezone}`;
-  }
-
+  if (isApprox) return `${dateStr} · time unknown · ${timezone}`;
   const timeStr = dob.toLocaleTimeString('en-US', {
     hour: '2-digit', minute: '2-digit', hour12: true,
     timeZone: timezone,
   });
-
   return `${dateStr} · ${timeStr} · ${timezone}`;
 }

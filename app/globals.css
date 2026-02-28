@@ -3,50 +3,62 @@
 @tailwind utilities;
 
 :root {
-  --background: #0a0a0f;
+  --background: #080810;
   --foreground: #e8e8f0;
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans), system-ui, sans-serif;
-  /* Subtle cosmic radial gradient — deepens toward the centre */
-  background-image: radial-gradient(
-    ellipse 120% 60% at 50% 0%,
-    rgba(80, 30, 140, 0.18) 0%,
-    transparent 70%
-  );
+  /* Stronger cosmic radial glow at the top */
+  background-image:
+    radial-gradient(ellipse 140% 55% at 50% -5%, rgba(100, 40, 180, 0.22) 0%, transparent 65%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(40, 20, 90, 0.12) 0%, transparent 70%);
   background-attachment: fixed;
 }
 
-/* Faint star-field texture using repeating-radial-gradient */
+/* ── Star field ───────────────────────────────────────────────────────────── */
+
 body::before {
   content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   background-image:
-    radial-gradient(1px 1px at 20%  30%, rgba(255,255,255,0.15) 0%, transparent 100%),
-    radial-gradient(1px 1px at 75%  15%, rgba(255,255,255,0.12) 0%, transparent 100%),
-    radial-gradient(1px 1px at 45%  65%, rgba(255,255,255,0.10) 0%, transparent 100%),
-    radial-gradient(1px 1px at 88%  50%, rgba(255,255,255,0.08) 0%, transparent 100%),
-    radial-gradient(1px 1px at 10%  80%, rgba(255,255,255,0.08) 0%, transparent 100%),
-    radial-gradient(1px 1px at 60%  90%, rgba(255,255,255,0.06) 0%, transparent 100%),
-    radial-gradient(1.5px 1.5px at 35% 45%, rgba(255,255,255,0.07) 0%, transparent 100%);
+    /* Brighter anchor stars */
+    radial-gradient(1.5px 1.5px at 15%  25%, rgba(255,255,255,0.55) 0%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 72%  12%, rgba(255,255,255,0.45) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 90%  62%, rgba(255,255,255,0.40) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 38%  78%, rgba(255,255,255,0.35) 0%, transparent 100%),
+    /* Medium stars */
+    radial-gradient(1px   1px   at 55%  35%, rgba(255,255,255,0.28) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 28%  55%, rgba(255,255,255,0.22) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 82%  38%, rgba(255,255,255,0.20) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 65%  88%, rgba(255,255,255,0.18) 0%, transparent 100%),
+    radial-gradient(1px   1px   at 10%  70%, rgba(255,255,255,0.16) 0%, transparent 100%),
+    /* Fine dust */
+    radial-gradient(0.5px 0.5px at 42%  18%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 95%  30%, rgba(255,255,255,0.18) 0%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 5%   48%, rgba(255,255,255,0.15) 0%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 78%  72%, rgba(255,255,255,0.14) 0%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 50%  95%, rgba(255,255,255,0.12) 0%, transparent 100%),
+    radial-gradient(0.5px 0.5px at 23%  92%, rgba(255,255,255,0.10) 0%, transparent 100%);
   z-index: 0;
 }
 
-/* All page content sits above the star field */
+/* ── All page content sits above the star field ───────────────────────────── */
+
 #__next, main { position: relative; z-index: 1; }
 
-/* ── Input dark-theme fix ────────────────────────────────────────────────────
-   Browsers on Windows render <input> / <textarea> with system light-mode text
-   by default, making white text invisible on dark backgrounds.
-   `color-scheme: dark` tells the browser to use dark-mode native controls.
-   `color` + `-webkit-text-fill-color` ensure typed text is always white.
-   The autofill block overrides Chrome's yellow-background injection.
-   ─────────────────────────────────────────────────────────────────────────── */
+/* ── Input dark-theme fix ─────────────────────────────────────────────────── */
+
 input,
 textarea,
 select {
@@ -61,7 +73,36 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active,
 textarea:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px #0f0f18 inset !important;
+  -webkit-box-shadow: 0 0 0px 1000px #0f0f1c inset !important;
   -webkit-text-fill-color: white !important;
   caret-color: white;
 }
+
+/* ── Custom scrollbar ─────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.10);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.18); }
+
+/* ── Text selection ───────────────────────────────────────────────────────── */
+
+::selection {
+  background: rgba(140, 80, 255, 0.35);
+  color: white;
+}
+
+/* ── Focus ring ───────────────────────────────────────────────────────────── */
+
+:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.25);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Navbar height reservation ────────────────────────────────────────────── */
+
+.nav-offset { padding-top: 56px; }

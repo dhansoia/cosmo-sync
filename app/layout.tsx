@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter, JetBrains_Mono } from 'next/font/google';
+import { AppNav } from '@/components/ui/AppNav';
 import './globals.css';
 
 const inter = Inter({
@@ -25,7 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} ${jetbrainsMono.variable} antialiased`}>
-        {children}
+        <AppNav />
+        <div className="nav-offset">
+          {children}
+        </div>
       </body>
     </html>
   );

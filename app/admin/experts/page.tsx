@@ -5,7 +5,7 @@ import { ExpertApplicationList } from '@/components/admin/ExpertApplicationList'
 
 export default async function AdminExpertsPage() {
   const uid = cookies().get('cosmo_uid')?.value;
-  if (!uid) redirect('/onboarding');
+  if (!uid) redirect('/login');
 
   const user = await db.user.findUnique({ where: { id: uid } });
   if (!user || user.role !== 'ADMIN') redirect('/');
