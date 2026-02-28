@@ -1,36 +1,42 @@
 'use client';
 
-import { GRID_SIGN, SIGN_ABBR } from '@/lib/kundli/VedicCalc';
+import { SIGN_ABBR, SIGN_SYMBOLS } from '@/lib/kundli/VedicCalc';
 
 interface PlanetEntry {
   abbr:         string;
   signIndex:    number;
   isRetrograde: boolean;
-  isLagna?:     boolean;
 }
 
-interface SouthIndianChartProps {
-  /** Entries to place in the chart cells */
+interface Props {
   entries:        PlanetEntry[];
-  /** Sign index (0–11) that is the first house (Lagna) */
   lagnaSignIndex: number;
   title?:         string;
 }
 
-const CELL_COLORS: Record<number, string> = {
-  1:  'text-orange-300',
-  4:  'text-emerald-300',
-  7:  'text-sky-300',
-  10: 'text-rose-300',
+// [cssGridRow, cssGridCol] (1-indexed) for sign indices 0–11
+// Aries at top-second, going clockwise to Pisces at top-first
+const SIGN_POS: [number, number][] = [
+  [1,2],[1,3],[1,4],   // 0 Aries, 1 Taurus, 2 Gemini
+  [2,4],[3,4],[4,4],   // 3 Cancer, 4 Leo, 5 Virgo
+  [4,3],[4,2],[4,1],   // 6 Libra, 7 Scorpio, 8 Sagittarius
+  [3,1],[2,1],[1,1],   // 9 Capricorn, 10 Aquarius, 11 Pisces
+];
+
+// Corner cells get a diagonal line (traditional South Indian marker)
+const CORNERS = new Set([2, 5, 8, 11]); // Gemini, Virgo, Sagittarius, Pisces
+
+// Angular house colours
+const ANGULAR: Record<number, { text: string; glow: string }> = {
+  1:  { text: '#fbbf24', glow: 'rgba(251,191,36,0.08)'  }, // amber  – Lagna
+  4:  { text: '#34d399', glow: 'rgba(52,211,153,0.05)'  }, // emerald
+  7:  { text: '#38bdf8', glow: 'rgba(56,189,248,0.05)'  }, // sky
+  10: { text: '#f87171', glow: 'rgba(248,113,113,0.05)' }, // rose
 };
 
-function houseColor(h: number): string {
-  return CELL_COLORS[h] ?? 'text-white/50';
-}
-
-export function SouthIndianChart({ entries, lagnaSignIndex, title }: SouthIndianChartProps) {
-  // Group entries by signIndex
-  const bySign: Map<number, PlanetEntry[]> = new Map();
+export function SouthIndianChart({ entries, lagnaSignIndex, title }: Props) {
+  // Group planets by sign
+  const bySign = new Map<number, PlanetEntry[]>();
   for (const e of entries) {
     if (!bySign.has(e.signIndex)) bySign.set(e.signIndex, []);
     bySign.get(e.signIndex)!.push(e);
@@ -40,90 +46,140 @@ export function SouthIndianChart({ entries, lagnaSignIndex, title }: SouthIndian
     return ((si - lagnaSignIndex + 12) % 12) + 1;
   }
 
-  function renderCell(row: number, col: number) {
-    const si = GRID_SIGN[row][col];
-    if (si === -1) {
-      // Centre cell
-      return (
-        <td
-          key={`${row}-${col}`}
-          rowSpan={row < 2 ? (col < 2 ? 2 : 1) : 1}
-          colSpan={row < 2 ? (col < 2 ? 2 : 1) : 1}
-          className="border border-white/10 bg-[#080810]"
-        >
-          {row === 1 && col === 1 && (
-            <div className="flex items-center justify-center h-full min-h-[60px]">
-              <span className="text-white/15 text-xs text-center leading-tight px-2">
-                {title ?? 'South Indian'}
-              </span>
-            </div>
-          )}
-        </td>
-      );
-    }
-
-    const hn       = houseNum(si);
-    const isLagna  = hn === 1;
-    const planetsHere = bySign.get(si) ?? [];
-
-    return (
-      <td
-        key={`${row}-${col}`}
-        className={`
-          border border-white/10 p-1.5 align-top w-[25%]
-          ${isLagna ? 'bg-white/[0.05]' : 'bg-transparent'}
-          transition-colors
-        `}
-        style={{ minWidth: 0, minHeight: 72 }}
+  return (
+    <div className="w-full max-w-[400px] mx-auto select-none">
+      {/* Outer glow wrapper */}
+      <div className="relative rounded-xl p-px"
+        style={{ background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%)' }}
       >
-        <div className="flex flex-col gap-0.5 h-full min-h-[68px]">
-          {/* House number + sign abbr */}
-          <div className="flex items-center justify-between">
-            <span className={`text-[10px] font-semibold ${houseColor(hn)}`}>{hn}</span>
-            <span className="text-[9px] text-white/20">{SIGN_ABBR[si]}</span>
-          </div>
+        {/* 4×4 CSS Grid */}
+        <div
+          className="relative w-full rounded-xl overflow-hidden"
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(4, 1fr)',
+            gridTemplateRows: 'repeat(4, 1fr)',
+            aspectRatio: '1 / 1',
+            background: 'rgba(8, 8, 18, 0.95)',
+          }}
+        >
+          {/* 12 sign cells */}
+          {Array.from({ length: 12 }, (_, si) => {
+            const [gridRow, gridCol] = SIGN_POS[si];
+            const h        = houseNum(si);
+            const isLagna  = h === 1;
+            const isCorner = CORNERS.has(si);
+            const planets  = bySign.get(si) ?? [];
+            const ang      = ANGULAR[h];
 
-          {/* Lagna marker */}
-          {isLagna && (
-            <span className="text-[9px] text-orange-400/80 font-medium">Lg</span>
-          )}
-
-          {/* Planets */}
-          <div className="flex flex-wrap gap-x-1 gap-y-0.5 mt-auto">
-            {planetsHere.map((p) => (
-              <span
-                key={p.abbr + p.signIndex}
-                className="text-[11px] text-white/75 leading-tight font-medium"
+            return (
+              <div
+                key={si}
+                className="relative overflow-hidden flex flex-col p-1.5"
+                style={{
+                  gridColumn:      gridCol,
+                  gridRow:         gridRow,
+                  backgroundColor: ang?.glow ?? 'transparent',
+                  borderRight:     '1px solid rgba(255,255,255,0.06)',
+                  borderBottom:    '1px solid rgba(255,255,255,0.06)',
+                }}
               >
-                {p.abbr}{p.isRetrograde && !['rahu','ketu'].includes(p.abbr.toLowerCase()) ? 'R' : ''}
-              </span>
-            ))}
+                {/* Diagonal line for corner cells */}
+                {isCorner && (
+                  <svg
+                    className="absolute inset-0 w-full h-full pointer-events-none"
+                    viewBox="0 0 100 100"
+                    preserveAspectRatio="none"
+                    aria-hidden="true"
+                  >
+                    <line
+                      x1="0" y1="0" x2="100" y2="100"
+                      stroke="rgba(255,255,255,0.07)"
+                      strokeWidth="1.2"
+                    />
+                  </svg>
+                )}
+
+                {/* House number (top-left) + sign symbol (top-right) */}
+                <div className="flex items-start justify-between leading-none relative z-10">
+                  <span
+                    className="text-[11px] font-bold tabular-nums"
+                    style={{ color: ang?.text ?? 'rgba(255,255,255,0.25)' }}
+                  >
+                    {h}
+                  </span>
+                  <span className="text-[10px]" style={{ opacity: 0.18 }}>
+                    {SIGN_SYMBOLS[si]}
+                  </span>
+                </div>
+
+                {/* Sign abbreviation (just below house number) */}
+                <div
+                  className="text-[8px] leading-none mt-px relative z-10"
+                  style={{ color: 'rgba(255,255,255,0.15)' }}
+                >
+                  {SIGN_ABBR[si]}
+                </div>
+
+                {/* Lagna "Asc" badge */}
+                {isLagna && (
+                  <div
+                    className="text-[8px] font-bold leading-none mt-0.5 tracking-widest relative z-10"
+                    style={{ color: '#fbbf24', opacity: 0.7 }}
+                  >
+                    ASC
+                  </div>
+                )}
+
+                {/* Planet abbreviations — anchored to cell bottom */}
+                <div className="mt-auto flex flex-wrap gap-x-[3px] gap-y-0 relative z-10">
+                  {planets.map((p) => (
+                    <span
+                      key={p.abbr + si}
+                      className="leading-[1.45] font-semibold"
+                      style={{
+                        fontSize:    '11px',
+                        color:       isLagna ? '#fde68a' : 'rgba(255,255,255,0.82)',
+                        fontVariantNumeric: 'tabular-nums',
+                      }}
+                    >
+                      {p.abbr}{p.isRetrograde ? 'R' : ''}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Center 2×2 — chart label */}
+          <div
+            className="flex flex-col items-center justify-center"
+            style={{
+              gridColumn:      '2 / 4',
+              gridRow:         '2 / 4',
+              background:      'rgba(0,0,0,0.35)',
+              borderRight:     '1px solid rgba(255,255,255,0.06)',
+              borderBottom:    '1px solid rgba(255,255,255,0.06)',
+            }}
+          >
+            {/* Decorative diamond */}
+            <div
+              className="mb-1.5"
+              style={{
+                width: 14, height: 14,
+                border: '1px solid rgba(255,255,255,0.08)',
+                transform: 'rotate(45deg)',
+              }}
+            />
+            <span
+              className="text-[10px] text-center tracking-widest uppercase font-medium"
+              style={{ color: 'rgba(255,255,255,0.10)', letterSpacing: '0.15em' }}
+            >
+              {title ?? 'Kundli'}
+            </span>
           </div>
         </div>
-      </td>
-    );
-  }
-
-  // Render 4×4 grid, skipping inner centre cells (handled by rowSpan/colSpan)
-  const skipCells = new Set(['1-1','1-2','2-1','2-2']);
-
-  return (
-    <div className="w-full max-w-xs mx-auto">
-      <table className="w-full border-collapse border border-white/10 rounded-xl overflow-hidden">
-        <tbody>
-          {[0,1,2,3].map((row) => (
-            <tr key={row}>
-              {[0,1,2,3].map((col) => {
-                const key = `${row}-${col}`;
-                if (skipCells.has(key)) return null;
-                // Only render centre once (at 1-1)
-                if (GRID_SIGN[row][col] === -1 && !(row === 1 && col === 1)) return null;
-                return renderCell(row, col);
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      </div>
     </div>
   );
 }
