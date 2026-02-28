@@ -73,7 +73,7 @@ function wholeSignHouse(planetLongitude: number, ascendantLongitude: number): nu
  * Mapped zodiac sign index (0-11) for a given sign name.
  * Used for Sade Sati and Yoga calculations that work on sign indices.
  */
-const SIGN_INDEX: Record<ZodiacSign, number> = {
+const _SIGN_INDEX: Record<ZodiacSign, number> = {
   Aries: 0, Taurus: 1, Gemini: 2, Cancer: 3,
   Leo: 4, Virgo: 5, Libra: 6, Scorpio: 7,
   Sagittarius: 8, Capricorn: 9, Aquarius: 10, Pisces: 11,
@@ -538,7 +538,6 @@ export class KundliAnalysisEngine {
   ): string {
     const asc          = chart.houses.ascendant;
     const lagnaSignIdx = signIndex(asc);
-    const lagnaSign    = chart.planets.sun.sign; // fallback — actual lagna sign:
     const actualLagna  = ['Aries','Taurus','Gemini','Cancer','Leo','Virgo',
                           'Libra','Scorpio','Sagittarius','Capricorn','Aquarius','Pisces'][lagnaSignIdx];
 
