@@ -1,6 +1,7 @@
 import { cookies }        from 'next/headers';
 import { redirect }       from 'next/navigation';
 import { KundliDashboard } from '@/components/kundli/KundliDashboard';
+import { KundliCharts }    from '@/components/kundli/KundliCharts';
 
 export const metadata = {
   title: 'Kundli Analysis · CosmoSync',
@@ -22,6 +23,11 @@ export default function KundliPage() {
           Vedic birth chart — Doshas, Yogas &amp; personalised remedies.
         </p>
       </header>
+
+      {/* Birth charts — 9 tabs: Lagna, Chalit, Moon, Navamsha, Planets, Planets-Sub, Birth Details, Panchang, Chalit Table */}
+      <section className="w-full max-w-2xl mx-auto mb-10">
+        <KundliCharts />
+      </section>
 
       <KundliDashboard />
     </main>
