@@ -1,7 +1,8 @@
 import { cookies }        from 'next/headers';
 import { redirect }       from 'next/navigation';
-import { KundliDashboard } from '@/components/kundli/KundliDashboard';
-import { KundliCharts }    from '@/components/kundli/KundliCharts';
+import { KundliDashboard }     from '@/components/kundli/KundliDashboard';
+import { KundliCharts }        from '@/components/kundli/KundliCharts';
+import { KundliPredictions }   from '@/components/kundli/KundliPredictions';
 
 export const metadata = {
   title: 'Kundli Analysis · CosmoSync',
@@ -24,9 +25,18 @@ export default function KundliPage() {
         </p>
       </header>
 
-      {/* Birth charts — 9 tabs: Lagna, Chalit, Moon, Navamsha, Planets, Planets-Sub, Birth Details, Panchang, Chalit Table */}
+      {/* Birth charts — 9 tabs */}
       <section className="w-full max-w-2xl mx-auto mb-10">
         <KundliCharts />
+      </section>
+
+      {/* Predictions — life / yearly / monthly / daily */}
+      <section className="w-full max-w-2xl mx-auto mb-10">
+        <div className="mb-4">
+          <h2 className="text-base font-semibold text-white/70 tracking-tight">Predictions</h2>
+          <p className="text-white/25 text-xs mt-0.5">AI-generated insights from your Vedic chart and current transits</p>
+        </div>
+        <KundliPredictions />
       </section>
 
       <KundliDashboard />

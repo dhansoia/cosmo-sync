@@ -33,8 +33,9 @@ model User {
   // Relations
   birthData      BirthData?
   astroProfile   AstroProfile?
-  kundliProfile  KundliProfile?
-  moodLogs       MoodLog[]
+  kundliProfile      KundliProfile?
+  kundliPredictions  KundliPrediction[]
+  moodLogs           MoodLog[]
   lessonProgress LessonProgress[]
   matchesAsOne   Match[]          @relation("UserOneMatches")
   matchesAsTwo   Match[]          @relation("UserTwoMatches")
@@ -330,6 +331,36 @@ model KundliProfile {
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  @@index([userId])
+}
+
+// ============================================================
+// KUNDLI PREDICTIONS
+// AI-generated life / yearly / monthly / daily predictions.
+// Cached per user × prediction type × period key to avoid
+// redundant LLM calls (TTL enforced in the API layer).
+// ============================================================
+
+enum PredictionType {
+  LIFE
+  YEARLY
+  MONTHLY
+  DAILY
+}
+
+model KundliPrediction {
+  id        String         @id @default(cuid())
+  userId    String
+  type      PredictionType
+  periodKey String         @default("") // "" | "2026" | "2026-02" | "2026-02-28"
+  sections  Json                        // { title: string; body: string }[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, type, periodKey])
   @@index([userId])
 }
 
