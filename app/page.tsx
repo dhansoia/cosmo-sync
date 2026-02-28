@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { BigThreeCard } from '@/components/big-three/BigThreeCard';
 import { db } from '@/lib/db';
+import type { UserRole } from '@prisma/client';
 
 /**
  * Demo birth data shown when the user has not yet onboarded.
@@ -19,19 +20,22 @@ export default async function Home() {
   const cookieStore = cookies();
   const uid = cookieStore.get('cosmo_uid')?.value ?? null;
 
-  const birthData = uid
-    ? await db.birthData.findUnique({ where: { userId: uid } })
+  const user = uid
+    ? await db.user.findUnique({ where: { id: uid }, select: { role: true, birthData: true } })
     : null;
+
+  const birthData = user?.birthData ?? null;
 
   // ── Build chart props ────────────────────────────────────────────────────
   const isPersonalised = birthData !== null;
+  const userRole: UserRole | null = user?.role ?? null;
 
-  const chartProps = isPersonalised
+  const chartProps = isPersonalised && birthData
     ? {
-        time:           birthData!.dateOfBirth.toISOString(),
-        lat:            birthData!.latitude,
-        lng:            birthData!.longitude,
-        birthInfoLabel: buildBirthLabel(birthData!.dateOfBirth, birthData!.isTimeApproximate, birthData!.timezone),
+        time:           birthData.dateOfBirth.toISOString(),
+        lat:            birthData.latitude,
+        lng:            birthData.longitude,
+        birthInfoLabel: buildBirthLabel(birthData.dateOfBirth, birthData.isTimeApproximate, birthData.timezone),
       }
     : DEMO;
 
@@ -133,6 +137,30 @@ export default async function Home() {
           >
             ✦ Marketplace
           </Link>
+          <Link
+            href="/profile"
+            className="
+              px-5 py-2.5 rounded-xl text-sm font-medium
+              border border-white/10 text-white/40
+              hover:border-white/25 hover:text-white/70
+              transition-colors
+            "
+          >
+            ◎ Profile
+          </Link>
+          {userRole === 'ADMIN' && (
+            <Link
+              href="/admin"
+              className="
+                px-5 py-2.5 rounded-xl text-sm font-medium
+                border border-red-400/20 text-red-400/60
+                hover:border-red-400/40 hover:text-red-400
+                transition-colors
+              "
+            >
+              ⚙ Admin
+            </Link>
+          )}
         </div>
       )}
 
