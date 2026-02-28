@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { cookies } from 'next/headers';
 import { BigThreeCard } from '@/components/big-three/BigThreeCard';
+import { LogoutButton } from '@/components/auth/LogoutButton';
 import { db } from '@/lib/db';
 import type { UserRole } from '@prisma/client';
 
@@ -64,10 +65,10 @@ export default async function Home() {
 
       {/* CTA — only when showing the demo */}
       {!isPersonalised && (
-        <div className="mt-10 flex flex-col items-center gap-3">
+        <div className="mt-10 flex flex-col items-center gap-4">
           <p className="text-white/30 text-sm">This is a demo chart. Ready to see yours?</p>
           <Link
-            href="/onboarding"
+            href="/register"
             className="
               px-7 py-3 rounded-xl text-sm font-semibold
               bg-white text-black hover:bg-white/90 active:bg-white/80
@@ -76,6 +77,12 @@ export default async function Home() {
           >
             Start your journey ✦
           </Link>
+          <p className="text-white/25 text-xs">
+            Already have an account?{' '}
+            <Link href="/login" className="text-white/45 hover:text-white/70 underline transition-colors">
+              Sign in
+            </Link>
+          </p>
         </div>
       )}
 
@@ -164,8 +171,15 @@ export default async function Home() {
         </div>
       )}
 
+      {/* Sign out — shown when logged in */}
+      {uid && (
+        <div className="mt-6">
+          <LogoutButton />
+        </div>
+      )}
+
       {/* Feature teaser */}
-      <footer className="mt-24 text-center space-y-3 text-white/20 text-sm">
+      <footer className="mt-20 text-center space-y-3 text-white/20 text-sm">
         <p>Phase 2 — Astro-Wellness Journal &nbsp;·&nbsp; Phase 3 — CosmoAcademy &nbsp;·&nbsp; Phase 4 — Synastry &amp; Compatibility &nbsp;·&nbsp; Phase 5 — Expert Marketplace</p>
       </footer>
     </main>

@@ -2,6 +2,7 @@ import { cookies }  from 'next/headers';
 import { redirect } from 'next/navigation';
 import Link         from 'next/link';
 import { ProfileDashboard } from '@/components/profile/ProfileDashboard';
+import { LogoutButton }     from '@/components/auth/LogoutButton';
 
 export const metadata = {
   title: 'Profile · CosmoSync',
@@ -34,6 +35,10 @@ export default function ProfilePage() {
       </header>
 
       <ProfileDashboard />
+
+      <div className="mt-10">
+        <LogoutButton />
+      </div>
 
     </main>
   );
